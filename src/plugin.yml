@@ -1,0 +1,5 @@
+name: Dune
+version: 0.0.0
+author: Lukas Palmer + Gareth Whaley
+main: us.lavaha.dune.Dune
+website: lavaha.us
