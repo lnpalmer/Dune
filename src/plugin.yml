@@ -3,3 +3,7 @@ version: 0.0.0
 author: Lukas Palmer + Gareth Whaley
 main: us.lavaha.dune.Dune
 website: lavaha.us
+commands:
+  dune:
+    description: Actions in the Dune plugin
+    usage: /dune

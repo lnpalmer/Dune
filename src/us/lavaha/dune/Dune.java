@@ -13,11 +13,15 @@ public class Dune extends JavaPlugin {
 
         log = getLogger();
 
-        log.info("Setting up...");
+        this.getCommand("dune").setExecutor(new CommandDune());
+        this.getServer().getPluginManager().registerEvents(new DuneListener(), this);
+
+        Spaceport.init();
 
     }
 
     @Override
     public void onDisable() {
+        Spaceport.term();
     }
 }
