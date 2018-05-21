@@ -5,13 +5,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.logging.Logger;
 
 public class Dune extends JavaPlugin {
-
-    private Logger log;
+    private static Dune instance;
 
     @Override
     public void onEnable() {
 
-        log = getLogger();
+        instance = this;
 
         this.getCommand("dune").setExecutor(new CommandDune());
         this.getServer().getPluginManager().registerEvents(new DuneListener(), this);
@@ -23,5 +22,9 @@ public class Dune extends JavaPlugin {
     @Override
     public void onDisable() {
         Spaceport.term();
+    }
+
+    public static Dune getInstance() {
+        return instance;
     }
 }

@@ -2,6 +2,9 @@ package us.lavaha.dune;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +15,7 @@ public class Spaceport {
 
     private static List<Spaceport> spaceports;
 
-    private static Map<Player, Spaceport> clients;
+    private static Map<Player, SpaceportSession> sessions;
 
     private SpaceportMenu menu;
 
@@ -23,13 +26,23 @@ public class Spaceport {
         this.menu = new SpaceportMenu(this);
     }
 
-    public void connect(Player player) {
-        menu.showTo(player);
-        clients.put(player, this);
+    public static void connect(Spaceport spaceport, Player player) {
+        SpaceportSession session = new SpaceportSession(spaceport, player);
+        sessions.put(player, session);
+        session.init();
     }
 
-    public void disconnect(Player player) {
-        clients.remove(player);
+    public static void disconnect(Player player) {
+        sessions.remove(player);
+        player.closeInventory();
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public SpaceportMenu getMenu() {
+        return menu;
     }
 
     public static void register(Spaceport spaceport) {
@@ -38,7 +51,7 @@ public class Spaceport {
 
     public static void init() {
         spaceports = new ArrayList<Spaceport>();
-        clients = new HashMap<Player, Spaceport>();
+        sessions = new HashMap<Player, SpaceportSession>();
     }
 
     public static void term() {
@@ -54,7 +67,7 @@ public class Spaceport {
         return null;
     }
 
-    public static Spaceport findByClient(Player player) {
-        return clients.getOrDefault(player, null);
+    public static SpaceportSession getPlayerSession(Player player) {
+        return sessions.getOrDefault(player, null);
     }
 }

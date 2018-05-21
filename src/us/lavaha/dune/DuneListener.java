@@ -23,7 +23,7 @@ public class DuneListener implements Listener {
             if (spaceport != null) {
                 event.setCancelled(true);
                 if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                    spaceport.connect(player);
+                    Spaceport.connect(spaceport, player);
                 }
             }
         }
@@ -32,11 +32,10 @@ public class DuneListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        Spaceport spaceport = Spaceport.findByClient(player);
+        SpaceportSession session = Spaceport.getPlayerSession(player);
 
-        if (spaceport != null) {
-            ItemStack clicked = event.getCurrentItem();
-            Inventory inventory = event.getClickedInventory();
+        if (session != null) {
+            session.onInventoryClick(event);
             event.setCancelled(true);
         }
     }
@@ -44,10 +43,10 @@ public class DuneListener implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
-        Spaceport spaceport = Spaceport.findByClient(player);
+        SpaceportSession session = Spaceport.getPlayerSession(player);
 
-        if (spaceport != null) {
-            spaceport.disconnect(player);
+        if (session != null) {
+            session.onInventoryClose(event);
         }
     }
 }
