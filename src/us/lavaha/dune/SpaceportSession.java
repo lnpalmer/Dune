@@ -9,15 +9,17 @@ public class SpaceportSession {
     private Spaceport spaceport;
     private Player player;
     private SpaceportMenu.SUBMENU submenu;
+    private boolean expectingClose;
 
     public SpaceportSession(Spaceport spaceport, Player player) {
         this.spaceport = spaceport;
         this.player = player;
+        this.expectingClose = false;
     }
 
     public void init() {
         this.setSubmenu(SpaceportMenu.SUBMENU.MAIN);
-        this.spaceport.getMenu().showTo(this.player, submenu);
+        this.spaceport.getMenu().show(this);
     }
 
     public void term() {
@@ -34,7 +36,7 @@ public class SpaceportSession {
 
     public void setSubmenu(SpaceportMenu.SUBMENU submenu) {
         this.submenu = submenu;
-        this.player.closeInventory();
+        this.spaceport.getMenu().show(this);
     }
 
     public Player getPlayer() {
@@ -46,6 +48,14 @@ public class SpaceportSession {
     }
 
     public void onInventoryClose(InventoryCloseEvent event) {
-        this.spaceport.getMenu().showTo(this.player, submenu);
+        this.spaceport.getMenu().onInventoryClose(event, this);
+    }
+
+    public void setExpectingClose(boolean expectingClose) {
+        this.expectingClose = expectingClose;
+    }
+
+    public boolean isExpectingClose() {
+        return expectingClose;
     }
 }

@@ -27,4 +27,5 @@ public class Dune extends JavaPlugin {
     public static Dune getInstance() {
         return instance;
     }
+
 }

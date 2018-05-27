@@ -1,7 +1,8 @@
 package us.lavaha.dune;
 
 import org.bukkit.Bukkit;
-        import org.bukkit.Material;
+import org.bukkit.Location;
+import org.bukkit.Material;
         import org.bukkit.World;
         import org.bukkit.entity.Item;
         import org.bukkit.entity.Player;
@@ -65,11 +66,11 @@ public class SpaceportMenu {
         this.tradeInventory.setItem(45, this.genBackStack());
     }
 
-    public void showTo(Player player, SUBMENU submenu) {
-        Inventory targetInventory = this.getSubmenuInventory(submenu);
-        if (!targetInventory.equals(player.getOpenInventory())) {
-            player.openInventory(targetInventory);
-        }
+    public void show(SpaceportSession session) {
+        Player player = session.getPlayer();
+        Inventory targetInventory = this.getSubmenuInventory(session.getSubmenu());
+        session.setExpectingClose(player.getOpenInventory() != null);
+        player.openInventory(targetInventory);
     }
 
     public void onInventoryClick(InventoryClickEvent event, SpaceportSession session) {
@@ -88,6 +89,7 @@ public class SpaceportMenu {
             }
             if (slot == 45) {
                 Spaceport.disconnect(player);
+                player.closeInventory();
             }
         }
 
@@ -97,7 +99,27 @@ public class SpaceportMenu {
             } else if (itemStack.getType() != Material.AIR) {
                 String destPlanet = itemMeta.getDisplayName();
                 player.sendMessage("Travelling to " + destPlanet + "...");
+
+                Location loc = Dune.getInstance().getServer().getWorld(destPlanet).getSpawnLocation();
+                player.teleport(loc);
+
+                Spaceport.disconnect(player);
+                player.closeInventory();
             }
+        }
+
+        if (inventory.equals(this.tradeInventory)) {
+            if (slot == 45) {
+                session.setSubmenu(SUBMENU.MAIN);
+            }
+        }
+    }
+
+    public void onInventoryClose(InventoryCloseEvent event, SpaceportSession session) {
+        if (session.isExpectingClose()) {
+            session.setExpectingClose(false);
+        } else {
+            this.show(session);
         }
     }
 

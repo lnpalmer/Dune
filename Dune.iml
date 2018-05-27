@@ -27,5 +27,6 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="library" name="org.jgrapht:jgrapht-core:1.2.1-SNAPSHOT" level="project" />
   </component>
 </module>
