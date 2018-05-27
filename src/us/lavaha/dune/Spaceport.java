@@ -12,29 +12,23 @@ import java.util.List;
 import java.util.Map;
 
 public class Spaceport {
-
-    private static List<Spaceport> spaceports;
-
-    private static Map<Player, SpaceportSession> sessions;
-
-    private SpaceportMenu menu;
-
-    private Location location;
-
     public Spaceport(Location location) {
         this.location = location;
         this.menu = new SpaceportMenu(this);
     }
 
-    public static void connect(Spaceport spaceport, Player player) {
-        SpaceportSession session = new SpaceportSession(spaceport, player);
-        sessions.put(player, session);
-        session.init();
+    public static SpaceportSession connect(Spaceport spaceport, Player player) {
+        SpaceportSession spaceportSession = new SpaceportSession(spaceport, player);
+        SpaceportSessionColl.get().add(spaceportSession);
+        spaceportSession.init();
+        return spaceportSession;
     }
 
     public static void disconnect(Player player) {
-        sessions.remove(player);
         player.closeInventory();
+        SpaceportSession spaceportSession = SpaceportSessionColl.get().findByPlayer(player);
+        spaceportSession.term();
+        SpaceportSessionColl.get().remove(spaceportSession);
     }
 
     public Location getLocation() {
@@ -45,29 +39,6 @@ public class Spaceport {
         return menu;
     }
 
-    public static void register(Spaceport spaceport) {
-        spaceports.add(spaceport);
-    }
-
-    public static void init() {
-        spaceports = new ArrayList<Spaceport>();
-        sessions = new HashMap<Player, SpaceportSession>();
-    }
-
-    public static void term() {
-    }
-
-    public static Spaceport findByLocation(Location location) {
-        for (Spaceport spaceport : spaceports) {
-            if (spaceport.location.equals(location)) {
-                return spaceport;
-            }
-        }
-
-        return null;
-    }
-
-    public static SpaceportSession getPlayerSession(Player player) {
-        return sessions.getOrDefault(player, null);
-    }
+    private SpaceportMenu menu;
+    private Location location;
 }

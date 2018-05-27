@@ -1,31 +1,33 @@
 package us.lavaha.dune;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Logger;
-
 public class Dune extends JavaPlugin {
-    private static Dune instance;
-
     @Override
     public void onEnable() {
-
         instance = this;
 
         this.getCommand("dune").setExecutor(new CommandDune());
-        this.getServer().getPluginManager().registerEvents(new DuneListener(), this);
+        this.getServer().getPluginManager().registerEvents(new SpaceportListener(), this);
+        this.getServer().getPluginManager().registerEvents(new HouseListener(), this);
 
-        Spaceport.init();
-
+        GameTickEvent gameTickEvent = new GameTickEvent();
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                Bukkit.getPluginManager().callEvent(gameTickEvent);
+            }
+        }, 1, 1);
     }
 
     @Override
     public void onDisable() {
-        Spaceport.term();
     }
 
-    public static Dune getInstance() {
+    public static Dune get() {
         return instance;
     }
 
+    private static Dune instance;
 }

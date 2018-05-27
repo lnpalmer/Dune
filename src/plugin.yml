@@ -7,3 +7,4 @@ commands:
   dune:
     description: Actions in the Dune plugin
     usage: /dune
+depend: [Factions]

@@ -4,8 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
         import org.bukkit.World;
-        import org.bukkit.entity.Item;
-        import org.bukkit.entity.Player;
+import org.bukkit.entity.Player;
         import org.bukkit.event.inventory.InventoryClickEvent;
         import org.bukkit.event.inventory.InventoryCloseEvent;
         import org.bukkit.inventory.Inventory;
@@ -69,7 +68,6 @@ public class SpaceportMenu {
     public void show(SpaceportSession session) {
         Player player = session.getPlayer();
         Inventory targetInventory = this.getSubmenuInventory(session.getSubmenu());
-        session.setExpectingClose(player.getOpenInventory() != null);
         player.openInventory(targetInventory);
     }
 
@@ -100,10 +98,7 @@ public class SpaceportMenu {
                 String destPlanet = itemMeta.getDisplayName();
                 player.sendMessage("Travelling to " + destPlanet + "...");
 
-                Location loc = Dune.getInstance().getServer().getWorld(destPlanet).getSpawnLocation();
-                player.teleport(loc);
-
-                Spaceport.disconnect(player);
+                session.depart(destPlanet);
                 player.closeInventory();
             }
         }
@@ -115,14 +110,6 @@ public class SpaceportMenu {
         }
     }
 
-    public void onInventoryClose(InventoryCloseEvent event, SpaceportSession session) {
-        if (session.isExpectingClose()) {
-            session.setExpectingClose(false);
-        } else {
-            this.show(session);
-        }
-    }
-
     public enum SUBMENU {
         MAIN, TRAVEL, TRADE
     }
@@ -130,7 +117,7 @@ public class SpaceportMenu {
     private Inventory genTravelInventory() {
         Inventory inventory = Bukkit.createInventory(null, 54, "Travel");
 
-        List<World> worlds = Dune.getInstance().getServer().getWorlds();
+        List<World> worlds = Dune.get().getServer().getWorlds();
         World ownWorld = this.spaceport.getLocation().getWorld();
         int slot = 0;
         for (World world : worlds) {

@@ -25,7 +25,7 @@ public class CommandDune implements CommandExecutor {
                     Block spBlock = bPrev;
                     spBlock.setType(Material.BEACON);
                     Spaceport spaceport = new Spaceport(spBlock.getLocation());
-                    Spaceport.register(spaceport);
+                    SpaceportColl.get().add(spaceport);
                     break;
                 }
 
