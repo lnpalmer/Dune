@@ -1,9 +1,19 @@
 package us.lavaha.dune;
 
+import com.google.gson.Gson;
 import org.bukkit.Location;
+import org.json.simple.JSONArray;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 
 public class SpaceportColl {
     public SpaceportColl() {
@@ -44,4 +54,27 @@ public class SpaceportColl {
 
     private static SpaceportColl instance = new SpaceportColl();
     private List<Spaceport> spaceports;
+
+    public void init() {
+    }
+
+    public void save(Path path) {
+        String json = Dune.get().getGson().toJson(spaceports.toArray());
+        try {
+            Files.write(path, json.getBytes());
+        } catch (Exception e) {
+            Dune.get().getLogger().log(Level.SEVERE, e.toString());
+        }
+    }
+
+    public void load(Path path) {
+        if (Files.exists(path)) {
+            try {
+                String json = new String(Files.readAllBytes(path));
+                spaceports = new ArrayList<Spaceport>(Arrays.asList(Dune.get().getGson().fromJson(json, Spaceport[].class)));
+            } catch (Exception e) {
+                Dune.get().getLogger().log(Level.SEVERE, e.toString());
+            }
+        }
+    }
 }

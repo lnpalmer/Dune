@@ -27,7 +27,6 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" name="org.jgrapht:jgrapht-core:1.2.1-SNAPSHOT" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -53,7 +52,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/TNE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/gson-2.8.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

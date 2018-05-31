@@ -1,5 +1,6 @@
 package us.lavaha.dune;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -23,8 +24,8 @@ public class CommandDune implements CommandExecutor {
 
                 if (b.getType() != Material.AIR && bPrev != null && bPrev.getType() == Material.AIR) {
                     Block spBlock = bPrev;
-                    spBlock.setType(Material.BEACON);
                     Spaceport spaceport = new Spaceport(spBlock.getLocation());
+                    spaceport.build();
                     SpaceportColl.get().add(spaceport);
                     break;
                 }

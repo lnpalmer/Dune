@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
         import org.bukkit.World;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
         import org.bukkit.event.inventory.InventoryClickEvent;
         import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Player;
 
         import java.util.Arrays;
         import java.util.List;
+import java.util.logging.Level;
 
 public class SpaceportMenu {
 
@@ -63,6 +65,26 @@ public class SpaceportMenu {
 
         this.tradeInventory = Bukkit.createInventory(null, 54, "Trade");
         this.tradeInventory.setItem(45, this.genBackStack());
+    }
+
+    public void tickSession(SpaceportSession session) {
+        Player player = session.getPlayer();
+
+        if (session.getTravelmode() == SpaceportSession.TRAVELMODE.NOT_TRAVELING) {
+            boolean isPlayerWatching = false;
+            List<HumanEntity> viewers = getSubmenuInventory(session.getSubmenu()).getViewers();
+            for (HumanEntity viewer : viewers) {
+                if (viewer instanceof Player) {
+                    if (((Player) viewer).equals(player)) {
+                        isPlayerWatching = true;
+                    }
+                }
+            }
+
+            if (!isPlayerWatching) {
+                this.show(session);
+            }
+        }
     }
 
     public void show(SpaceportSession session) {

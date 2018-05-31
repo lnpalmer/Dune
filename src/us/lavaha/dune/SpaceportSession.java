@@ -27,12 +27,6 @@ public class SpaceportSession {
     }
 
     public void tick() {
-        if (travelmode.equals(TRAVELMODE.NOT_TRAVELING)) {
-            if (ticks % 20 == 0) {
-                spaceport.getMenu().show(this);
-            }
-        }
-
         if (travelmode.equals(TRAVELMODE.ASCENDING)) {
             Location playerLocation = player.getLocation();
             playerLocation.setDirection(new Vector(0.0f, 1.0f, 0.0f));
@@ -52,6 +46,9 @@ public class SpaceportSession {
                 player.setFallDistance(0.0f);
             }
         }
+
+        spaceport.getMenu().tickSession(this);
+
         ticks ++;
     }
 
@@ -86,6 +83,10 @@ public class SpaceportSession {
         this.spaceport.getMenu().onInventoryClick(event, this);
     }
 
+    public TRAVELMODE getTravelmode() {
+        return travelmode;
+    }
+
     public void setTravelmode(TRAVELMODE travelmode) {
         this.travelmode = travelmode;
     }
@@ -93,7 +94,6 @@ public class SpaceportSession {
     enum TRAVELMODE {
         NOT_TRAVELING,
         ASCENDING,
-        DESCENDING
     }
 
     private Spaceport spaceport;
