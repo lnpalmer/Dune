@@ -1,6 +1,7 @@
 package us.lavaha.dune;
 
 import com.google.gson.Gson;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.json.simple.JSONArray;
 
@@ -40,10 +41,33 @@ public class SpaceportColl {
         return null;
     }
 
+    public Spaceport findByChunk(Chunk chunk) {
+        for (Spaceport spaceport : spaceports) {
+            if (spaceport.getLocation().getChunk().equals(chunk)) {
+                return spaceport;
+            }
+        }
+
+        return null;
+    }
+
     public Spaceport findByWorldName(String worldName) {
         for (Spaceport spaceport : spaceports) {
             if (spaceport.getLocation().getWorld().getName().equals(worldName)) {
                 return spaceport;
+            }
+        }
+
+        return null;
+    }
+
+    public Spaceport findByHouse(House house) {
+        for (Spaceport spaceport : spaceports) {
+            House spaceportHouse = spaceport.getHouse();
+            if (spaceportHouse != null) {
+                if (spaceportHouse.equals(house)) {
+                    return spaceport;
+                }
             }
         }
 

@@ -1,9 +1,9 @@
 package us.lavaha.dune;
 
-import com.massivecraft.factions.entity.BoardColl;
-import com.massivecraft.factions.entity.Faction;
+import com.massivecraft.factions.entity.*;
 import com.massivecraft.massivecore.ps.PS;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,10 +27,29 @@ public class HouseColl {
         return null;
     }
 
+    public House findByFaction(Faction faction) {
+        return this.findById(faction.getId());
+    }
+
     public House findByLocation(Location location) {
         Faction faction = BoardColl.get().getFactionAt(PS.valueOf(location));
         String houseId = faction.getId();
         return findById(houseId);
+    }
+
+    public House findByPlayer(Player player) {
+        Faction faction = MPlayer.get(player).getFaction();
+        return this.findById(faction.getId());
+    }
+
+    public House findByName(String name) {
+        for (House house : houses) {
+            if (house.getName().equals(name)) {
+                return house;
+            }
+        }
+
+        return null;
     }
 
     public void add(House house) {

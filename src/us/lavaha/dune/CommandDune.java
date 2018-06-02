@@ -11,7 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class CommandDune implements CommandExecutor {
     @Override
@@ -19,6 +21,7 @@ public class CommandDune implements CommandExecutor {
         if (strings.length >= 1) {
             if (strings[0].equals("spaceport")) return onCommandSpaceport(sender, command, s, strings);
             if (strings[0].equals("smugport")) return onCommandSmugport(sender, command, s, strings);
+            if (strings[0].equals("house")) return onCommandHouse(sender, command, s, strings);
         }
 
         return false;
@@ -182,6 +185,43 @@ public class CommandDune implements CommandExecutor {
             Dune.get().getLogger().log(Level.SEVERE, e.toString());
         }
 
+
+        return false;
+    }
+
+    private boolean onCommandHouse(CommandSender sender, Command command, String s, String[] strings) {
+        if (strings.length >= 2) {
+
+            if (strings[1].equals("info") && strings.length <= 3) {
+                Player player = (Player) sender;
+                House house;
+                if (strings.length == 2) {
+                    house = HouseColl.get().findByPlayer(player);
+                } else {
+                    house = HouseColl.get().findByName(strings[2]);
+                }
+
+                if (house != null) {
+
+                    player.sendMessage("[[[ House " + house.getName() + " ]]]");
+                    player.sendMessage("\"" + house.getFaction().getDescription() + "\"");
+                    if (house.isMajor()) {
+                        player.sendMessage("Major house of " + house.getCapitalName());
+                    } else {
+                        player.sendMessage("A minor house");
+                    }
+                    List<Player> housePlayers = house.getPlayers();
+                    List<String> housePlayerNames = housePlayers.stream().map(Player::getName).collect(Collectors.toList());
+                    player.sendMessage("Members: " + String.join(", ", housePlayerNames));
+
+                } else {
+                    player.sendMessage("That house does not exist!");
+                }
+
+                return true;
+            }
+
+        }
 
         return false;
     }
