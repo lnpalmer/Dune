@@ -27,6 +27,7 @@ public class Dune extends JavaPlugin {
 
         this.getCommand("dune").setExecutor(new CommandDune());
         this.getServer().getPluginManager().registerEvents(new SpaceportListener(), this);
+        this.getServer().getPluginManager().registerEvents(new SmugportListener(), this);
         this.getServer().getPluginManager().registerEvents(new HouseListener(), this);
 
         GameTickEvent gameTickEvent = new GameTickEvent();
@@ -39,12 +40,19 @@ public class Dune extends JavaPlugin {
 
         SpaceportColl.get().load(Paths.get(this.getDataFolder().getPath(), "spaceports.json"));
         SpaceportColl.get().init();
+
+        SmugportColl.get().load(Paths.get(this.getDataFolder().getPath(), "smugports.json"));
+        SmugportColl.get().init();
+
+        HouseColl.get().load(Paths.get(this.getDataFolder().getPath(), "houses.json"));
+        HouseColl.get().init();
     }
 
     @Override
     public void onDisable() {
         SpaceportColl.get().save(Paths.get(this.getDataFolder().getPath(), "spaceports.json"));
-        getLogger().log(Level.SEVERE, Paths.get(this.getDataFolder().getPath(), "spaceports.json").toAbsolutePath().toString());
+        SmugportColl.get().save(Paths.get(this.getDataFolder().getPath(), "smugports.json"));
+        HouseColl.get().save(Paths.get(this.getDataFolder().getPath(), "houses.json"));
     }
 
     public Gson getGson() {

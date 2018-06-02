@@ -8,15 +8,15 @@ import org.bukkit.Location;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-public class SpaceportJsonAdapter extends TypeAdapter<Spaceport> {
-    @Override public void write(JsonWriter out, Spaceport spaceport) throws IOException {
+public class SmugportJsonAdapter extends TypeAdapter<Smugport> {
+    @Override public void write(JsonWriter out, Smugport smugport) throws IOException {
         out.beginObject();
 
         // write location
         out.name("location");
         out.beginObject();
 
-        Location location = spaceport.getLocation();
+        Location location = smugport.getLocation();
         out.name("world");
         out.value(location.getWorld().getName());
 
@@ -37,17 +37,21 @@ public class SpaceportJsonAdapter extends TypeAdapter<Spaceport> {
 
         out.endObject();
 
+        out.name("destination");
+        out.value(smugport.getDestination());
+
         out.name("travelFee");
-        Dune.get().getGson().toJson(spaceport.getTravelFee(), BigDecimal.class, out);
+        Dune.get().getGson().toJson(smugport.getTravelFee(), BigDecimal.class, out);
 
         out.name("balance");
-        Dune.get().getGson().toJson(spaceport.getBalance(), BigDecimal.class, out);
+        Dune.get().getGson().toJson(smugport.getBalance(), BigDecimal.class, out);
 
         out.endObject();
     }
 
-    @Override public Spaceport read(JsonReader in) throws IOException {
+    @Override public Smugport read(JsonReader in) throws IOException {
         Location location = null;
+        String destination = "";
         BigDecimal travelFee = new BigDecimal(0);
         BigDecimal balance = new BigDecimal(0);
 
@@ -84,6 +88,10 @@ public class SpaceportJsonAdapter extends TypeAdapter<Spaceport> {
 
             }
 
+            if (name.equals("destination")) {
+                destination = in.nextString();
+            }
+
             if (name.equals("travelFee")) {
                 travelFee = Dune.get().getGson().fromJson(in, BigDecimal.class);
             }
@@ -94,9 +102,10 @@ public class SpaceportJsonAdapter extends TypeAdapter<Spaceport> {
         }
         in.endObject();
 
-        Spaceport spaceport = new Spaceport(location);
-        spaceport.setTravelFee(travelFee);
-        spaceport.setBalance(balance);
-        return spaceport;
+        Smugport smugport = new Smugport(location);
+        smugport.setDestination(destination);
+        smugport.setTravelFee(travelFee);
+        smugport.setBalance(balance);
+        return smugport;
     }
 }

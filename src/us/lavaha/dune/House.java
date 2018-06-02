@@ -6,7 +6,6 @@ import com.massivecraft.factions.entity.FactionColl;
 public class House {
     public House(String id) {
         this.id = id;
-        this.major = false;
     }
 
     public Faction getFaction() {
@@ -17,6 +16,9 @@ public class House {
         return id;
     }
 
+    public String getName() {
+        return getFaction().getName();
+    }
+
     private String id;
-    private boolean major;
 }

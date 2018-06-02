@@ -1,26 +1,31 @@
 package us.lavaha.dune;
 
 import com.google.gson.annotations.JsonAdapter;
-import net.minecraft.server.v1_12_R1.BlockStainedGlass;
-import net.minecraft.server.v1_12_R1.EnumColor;
-import net.minecraft.server.v1_12_R1.MaterialDecoration;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.material.Colorable;
-import org.bukkit.material.MaterialData;
-import org.bukkit.metadata.MetadataValue;
+
+import java.math.BigDecimal;
 
 @JsonAdapter(SpaceportJsonAdapter.class)
 public class Spaceport {
     public Spaceport(Location location) {
         this.location = location;
         this.menu = new SpaceportMenu(this);
+        this.travelFee = new BigDecimal(0);
+        this.balance = new BigDecimal(0);
+    }
+
+    public static boolean canCreate(Location location) {
+        Spaceport worldHolder = SpaceportColl.get().findByWorldName(location.getWorld().getName());
+        return worldHolder == null;
     }
 
     public static SpaceportSession connect(Spaceport spaceport, Player player) {
+        if (SpaceportSessionColl.get().findByPlayer(player) != null) {
+            return null;
+        }
+
         SpaceportSession spaceportSession = new SpaceportSession(spaceport, player);
         SpaceportSessionColl.get().add(spaceportSession);
         spaceportSession.init();
@@ -46,8 +51,12 @@ public class Spaceport {
 
         for (Location glassLocation : this.glassLocations()) {
             glassLocation.getBlock().setType(Material.STAINED_GLASS);
-            glassLocation.getBlock().setData(DyeColor.MAGENTA.getDyeData());
+            glassLocation.getBlock().setData((byte) 4);
         }
+    }
+
+    public House getHouse() {
+        return HouseColl.get().findByLocation(location);
     }
 
     public Location getLocation() {
@@ -56,6 +65,22 @@ public class Spaceport {
 
     public SpaceportMenu getMenu() {
         return menu;
+    }
+
+    public BigDecimal getTravelFee() {
+        return travelFee;
+    }
+
+    public void setTravelFee(BigDecimal travelFee) {
+        this.travelFee = travelFee;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
     }
 
     private Location[] glassLocations() {
@@ -70,7 +95,45 @@ public class Spaceport {
         return locations;
     }
 
+    public boolean canReach(String worldName) {
+        // can't travel to own world
+        if (worldName.equals(location.getWorld().getName())) return false;
+
+        // spaceports can reach any other planet with a spaceport
+        Spaceport target = SpaceportColl.get().findByWorldName(worldName);
+        if (target != null) return true;
+
+        return false;
+    }
+
+    public boolean contains(Location otherLocation) {
+        if (otherLocation.getWorld().getName().equals(location.getWorld().getName())) {
+            Location d = location.clone().subtract(otherLocation);
+            return (d.getX() <= 1.0 && d.getX() >= -1.0 &&
+                    d.getY() <= 1.0 && d.getY() >= -1.0 &&
+                    d.getZ() <= 1.0 && d.getZ() >= -1.0);
+        }
+
+        return false;
+    }
+
+    public void deposit(BigDecimal amount) {
+        this.balance = this.balance.add(amount);
+    }
+
+    public BigDecimal withdrawAll() {
+        BigDecimal all = this.balance;
+        this.balance = new BigDecimal(0);
+        return all;
+    }
+
+    public static final BigDecimal price = new BigDecimal(10000000);
+
     private SpaceportMenu menu;
 
     private Location location;
+
+    private BigDecimal travelFee;
+
+    private BigDecimal balance;
 }

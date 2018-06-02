@@ -1,5 +1,6 @@
 package us.lavaha.dune;
 
+import com.earth2me.essentials.api.Economy;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.block.Beacon;
@@ -9,6 +10,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+
+import java.math.BigDecimal;
+import java.util.logging.Level;
 
 public class SpaceportSession {
     public SpaceportSession(Spaceport spaceport, Player player) {
@@ -52,15 +56,36 @@ public class SpaceportSession {
         ticks ++;
     }
 
-    public void depart(String destination) {
-        this.destination = destination;
-        this.travelmode = TRAVELMODE.ASCENDING;
-        Location liftoffLocation = spaceport.getLocation().clone();
-        liftoffLocation.setX(liftoffLocation.getX() + 0.5f);
-        liftoffLocation.setY(liftoffLocation.getY() + 1.0f);
-        liftoffLocation.setZ(liftoffLocation.getZ() + 0.5f);
-        liftoffLocation.setDirection(new Vector(0.0f, 1.0f, 0.0f));
-        player.teleport(liftoffLocation);
+    public boolean depart(String destination) {
+        Spaceport destinationSpaceport = SpaceportColl.get().findByWorldName(destination);
+        BigDecimal departureCost = spaceport.getTravelFee();
+        BigDecimal arrivalCost = destinationSpaceport.getTravelFee();
+        BigDecimal travelCost = departureCost.add(arrivalCost);
+        try {
+            if (Economy.hasEnough(player.getName(), travelCost)) {
+                Economy.substract(player.getName(), travelCost);
+                this.spaceport.deposit(departureCost);
+                destinationSpaceport.deposit(arrivalCost);
+                player.sendMessage("Paid $" + travelCost + " to travel to " + destination + "...");
+
+                this.destination = destination;
+                this.travelmode = TRAVELMODE.ASCENDING;
+                Location liftoffLocation = spaceport.getLocation().clone();
+                liftoffLocation.setX(liftoffLocation.getX() + 0.5f);
+                liftoffLocation.setY(liftoffLocation.getY() + 1.0f);
+                liftoffLocation.setZ(liftoffLocation.getZ() + 0.5f);
+                liftoffLocation.setDirection(new Vector(0.0f, 1.0f, 0.0f));
+                player.teleport(liftoffLocation);
+
+            } else {
+                player.sendMessage("You cannot afford to travel there.");
+                return false;
+            }
+        } catch (Exception e) {
+            Dune.get().getLogger().log(Level.SEVERE, e.toString());
+        }
+
+        return false;
     }
 
     public Spaceport getSpaceport() {

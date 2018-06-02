@@ -30,6 +30,16 @@ public class SpaceportColl {
         return null;
     }
 
+    public Spaceport findByContainedLocation(Location location) {
+        for (Spaceport spaceport : spaceports) {
+            if (spaceport.contains(location)) {
+                return spaceport;
+            }
+        }
+
+        return null;
+    }
+
     public Spaceport findByWorldName(String worldName) {
         for (Spaceport spaceport : spaceports) {
             if (spaceport.getLocation().getWorld().getName().equals(worldName)) {

@@ -17,16 +17,22 @@ import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public class SpaceportListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if (event.getClickedBlock().getType() == Material.BEACON) {
-            Location location = event.getClickedBlock().getLocation();
-            Spaceport spaceport = SpaceportColl.get().findByLocation(location);
+        Location location = event.getClickedBlock().getLocation();
+        Spaceport spaceport = SpaceportColl.get().findByWorldName(location.getWorld().getName());
 
-            if (spaceport != null) {
+        if (spaceport != null) {
+
+            Location locDiff = location.clone().subtract(spaceport.getLocation());
+            if (
+                    locDiff.getX() >= -1 && locDiff.getX() <= 1 &&
+                    locDiff.getY() >= -1 && locDiff.getY() <= 1 &&
+                    locDiff.getZ() >= -1 && locDiff.getZ() <= 1) {
                 event.setCancelled(true);
                 if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                     Spaceport.connect(spaceport, player);

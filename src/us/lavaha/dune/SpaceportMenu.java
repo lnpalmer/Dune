@@ -1,5 +1,6 @@
 package us.lavaha.dune;
 
+import com.mysql.fabric.xmlrpc.base.Array;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,20 +13,12 @@ import org.bukkit.entity.Player;
         import org.bukkit.inventory.ItemStack;
         import org.bukkit.inventory.meta.ItemMeta;
 
-        import java.util.Arrays;
+import java.math.BigDecimal;
+import java.util.Arrays;
         import java.util.List;
 import java.util.logging.Level;
 
 public class SpaceportMenu {
-
-    private Spaceport spaceport;
-    private Inventory mainInventory;
-    private Inventory travelInventory;
-    private Inventory tradeInventory;
-
-    private ItemStack travelStack;
-    private ItemStack aboutStack;
-    private ItemStack tradeStack;
 
     public SpaceportMenu(Spaceport spaceport) {
         this.spaceport = spaceport;
@@ -43,9 +36,6 @@ public class SpaceportMenu {
         aboutStack = new ItemStack(Material.FIREBALL, 1);
         ItemMeta aboutMeta = aboutStack.getItemMeta();
         aboutMeta.setDisplayName(this.spaceport.getLocation().getWorld().getName());
-        aboutMeta.setLore(Arrays.asList(
-                "Informally known as Dune"
-        ));
         aboutStack.setItemMeta(aboutMeta);
         this.mainInventory.setItem(49, aboutStack);
 
@@ -61,7 +51,7 @@ public class SpaceportMenu {
 
         this.mainInventory.setItem(45, this.genBackStack());
 
-        this.travelInventory = this.genTravelInventory();
+        this.travelInventory = Bukkit.createInventory(null, 54, "Travel");
 
         this.tradeInventory = Bukkit.createInventory(null, 54, "Trade");
         this.tradeInventory.setItem(45, this.genBackStack());
@@ -88,9 +78,55 @@ public class SpaceportMenu {
     }
 
     public void show(SpaceportSession session) {
+        this.refresh();
+
         Player player = session.getPlayer();
         Inventory targetInventory = this.getSubmenuInventory(session.getSubmenu());
         player.openInventory(targetInventory);
+    }
+
+    private void refresh() {
+        ItemStack aboutStack = this.mainInventory.getItem(49);
+        ItemMeta aboutMeta = aboutStack.getItemMeta();
+        House spaceportOwner = this.spaceport.getHouse();
+
+        String governanceString = "";
+        if (spaceportOwner != null) governanceString = "Governed by house " + spaceportOwner.getName();
+        else governanceString = "This planet is unclaimed!";
+        aboutMeta.setLore(Arrays.asList(
+                governanceString,
+                "Travel fee: $" + this.spaceport.getTravelFee(),
+                "Coffers: $" + this.spaceport.getBalance()
+        ));
+
+        aboutStack.setItemMeta(aboutMeta);
+
+        // update travel menu
+        travelInventory.clear();
+        int slot = 0;
+        for (World world : Dune.get().getServer().getWorlds()) {
+            String worldName = world.getName();
+
+            if (this.spaceport.canReach(worldName)) {
+                BigDecimal departureFee = this.spaceport.getTravelFee();
+                BigDecimal arrivalFee = SpaceportColl.get().findByWorldName(worldName).getTravelFee();
+                BigDecimal totalFee = departureFee.add(arrivalFee);
+
+                ItemStack destinationStack = new ItemStack(Material.FIREBALL, 1);
+                ItemMeta destinationMeta = destinationStack.getItemMeta();
+                destinationMeta.setDisplayName(worldName);
+                destinationMeta.setLore(Arrays.asList(
+                        "Departure fee: $" + departureFee,
+                        "Arrival fee: $" + arrivalFee,
+                        "Total travel fee: $" + totalFee
+                ));
+                destinationStack.setItemMeta(destinationMeta);
+                this.travelInventory.setItem(slot, destinationStack);
+
+                slot++;
+            }
+        }
+        this.travelInventory.setItem(45, this.genBackStack());
     }
 
     public void onInventoryClick(InventoryClickEvent event, SpaceportSession session) {
@@ -118,10 +154,9 @@ public class SpaceportMenu {
                 session.setSubmenu(SUBMENU.MAIN);
             } else if (itemStack.getType() != Material.AIR) {
                 String destPlanet = itemMeta.getDisplayName();
-                player.sendMessage("Travelling to " + destPlanet + "...");
-
-                session.depart(destPlanet);
-                player.closeInventory();
+                if (session.depart(destPlanet)) {
+                    player.closeInventory();
+                }
             }
         }
 
@@ -134,30 +169,6 @@ public class SpaceportMenu {
 
     public enum SUBMENU {
         MAIN, TRAVEL, TRADE
-    }
-
-    private Inventory genTravelInventory() {
-        Inventory inventory = Bukkit.createInventory(null, 54, "Travel");
-
-        List<World> worlds = Dune.get().getServer().getWorlds();
-        World ownWorld = this.spaceport.getLocation().getWorld();
-        int slot = 0;
-        for (World world : worlds) {
-            if (!world.equals(ownWorld)) {
-                ItemStack worldStack = new ItemStack(Material.FIREBALL, 1);
-                ItemMeta worldMeta = worldStack.getItemMeta();
-                worldMeta.setDisplayName(world.getName());
-                worldStack.setItemMeta(worldMeta);
-
-                inventory.setItem(slot, worldStack);
-
-                slot++;
-            }
-        }
-
-        inventory.setItem(45, this.genBackStack());
-
-        return inventory;
     }
 
     private ItemStack genBackStack() {
@@ -184,4 +195,14 @@ public class SpaceportMenu {
                 return null;
         }
     }
+
+    private Spaceport spaceport;
+
+    private Inventory mainInventory;
+    private Inventory travelInventory;
+    private Inventory tradeInventory;
+
+    private ItemStack travelStack;
+    private ItemStack aboutStack;
+    private ItemStack tradeStack;
 }
