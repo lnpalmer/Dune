@@ -54,7 +54,7 @@ public class HouseListener implements Listener {
                     if (claimingHouse == null && cedingHouse != null) {
                         Dune.get().getServer().broadcastMessage("The " + cedingHouse.getName() + " have lost " + ps.getWorld() + " to the wild!");
                     }
-
+                }
             }
         }
     }
