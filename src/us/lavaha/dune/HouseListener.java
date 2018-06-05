@@ -42,17 +42,19 @@ public class HouseListener implements Listener {
                     }
                 }
 
-                House cedingHouse = HouseColl.get().findByFaction(event.getOldChunkFaction().get(ps));
+                if (!event.isCancelled()) {
+                    House cedingHouse = HouseColl.get().findByFaction(event.getOldChunkFaction().get(ps));
 
-                if (claimingHouse != null && cedingHouse == null) {
-                    Dune.get().getServer().broadcastMessage("The " + claimingHouse.getName() + " have made " + ps.getWorld() + " their capital!");
-                }
-                if (claimingHouse != null && cedingHouse != null) {
-                    Dune.get().getServer().broadcastMessage("The " + claimingHouse.getName() + " have taken " + ps.getWorld() + " from the " + cedingHouse.getName() + "!");
-                }
-                if (claimingHouse == null && cedingHouse != null) {
-                    Dune.get().getServer().broadcastMessage("The " + cedingHouse.getName() + " have lost " + ps.getWorld() + " to the wild!");
-                }
+                    if (claimingHouse != null && cedingHouse == null) {
+                        Dune.get().getServer().broadcastMessage("The " + claimingHouse.getName() + " have made " + ps.getWorld() + " their capital!");
+                    }
+                    if (claimingHouse != null && cedingHouse != null) {
+                        Dune.get().getServer().broadcastMessage("The " + claimingHouse.getName() + " have taken " + ps.getWorld() + " from the " + cedingHouse.getName() + "!");
+                    }
+                    if (claimingHouse == null && cedingHouse != null) {
+                        Dune.get().getServer().broadcastMessage("The " + cedingHouse.getName() + " have lost " + ps.getWorld() + " to the wild!");
+                    }
+
             }
         }
     }

@@ -1,0 +1,45 @@
+{
+    "num_planets": 32,
+    "resources": [
+        {
+            "material": "DIAMOND_ORE",
+            "num_planets": 2
+        },
+        {
+            "material": "REDSTONE_ORE",
+            "num_planets": 2
+        },
+        {
+            "material": "EMERALD_ORE",
+            "num_planets": 2
+        },
+        {
+            "material": "GOLD_ORE",
+            "num_planets": 2
+        },
+        {
+            "material": "COAL_ORE",
+            "num_planets": 4
+        },
+        {
+            "material": "IRON_ORE",
+            "num_planets": 3
+        },
+        {
+            "material": "LAPIS_ORE",
+            "num_planets": 2
+        },
+        {
+            "material": "PUMPKIN",
+            "num_planets": 2
+        },
+        {
+            "material": "MELON_BLOCK",
+            "num_planets": 2
+        },
+        {
+            "material": "CLAY",
+            "num_planets": 2
+        }
+    ]
+}

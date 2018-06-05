@@ -1,0 +1,3 @@
+[submodule "res/Elite"]
+	path = res/Elite
+	url = https://github.com/jabbalaci/Elite.git
