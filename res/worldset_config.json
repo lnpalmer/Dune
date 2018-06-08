@@ -41,5 +41,32 @@
             "material": "CLAY",
             "num_planets": 2
         }
+    ],
+    "biome_presets": [
+        "Alpine",
+        "Hell",
+        "Forest",
+        "Tropical Savanna",
+        "Cold Plains",
+        "Desert",
+        "Dry Plains",
+        "Drylands",
+        "Flower Forest",
+        "ForestConifer",
+        "ForestHills",
+        "Ice Mountains",
+        "JungleCliffs",
+        "Marsh",
+        "Mesa Desert",
+        "Monument",
+        "Roofed Fungi Forest",
+        "Savanna",
+        "TemperateHills",
+        "Tundra",
+        "Uplands",
+        "MushroomIsland",
+        "Mesa",
+        "Jungle",
+        "JungleMountainRange"
     ]
 }
