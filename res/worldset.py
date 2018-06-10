@@ -2,11 +2,13 @@ import sys
 sys.path.append("Elite")
 
 import argparse
+import os
 import json
 import random
 import pyplanets
 
 from biome import Biome
+from world import World
 
 parser = argparse.ArgumentParser(
     prog="Dune World Set Generator",
@@ -38,6 +40,7 @@ planets = [{"resources": [], "name": names[i]} for i in range(num_planets)]
     # resource_names = [res["material"] for res in planet["resources"]]
     # print("<%s> resources: %s" % (planet["name"], ", ".join(resource_names)))
 
-biome_a, biome_b = Biome.sample_compatible_pair()
-biome_a.write("pair_a.bc")
-biome_b.write("pair_b.bc")
+for i in range(7):
+    biome_a, biome_b = Biome.sample_compatible_pair()
+    world = World.create_from_biome_pair(biome_a, biome_b, "island spill")
+    world.write(os.path.join(args.output_root, "foo%i" % i))

@@ -1,5 +1,5 @@
 {
-    "num_planets": 32,
+    "num_planets": 7,
     "resources": [
         {
             "material": "DIAMOND_ORE",
@@ -67,6 +67,16 @@
         "MushroomIsland",
         "Mesa",
         "Jungle",
-        "JungleMountainRange"
+        "JungleMountainRange",
+        "Canyon",
+        "DesertHills",
+        "ForestFir",
+        "ForestSakura",
+        "TropicalPillars",
+        "Mesa Plateau",
+        "DesertOasis",
+        "DesertRed",
+        "DesertRedConifer",
+        "DesertTropical"
     ]
 }
