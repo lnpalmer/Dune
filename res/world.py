@@ -103,6 +103,7 @@ class World:
             # put islands of A in the spill biome
             world_biome_a.island_in_biomes.append(spill_biome)
             world_biome_a["BiomeSizeWhenIsle"] = 7
+            world_biome_a["BiomeRarityWhenIsle"] = 100
 
             world.biomes = [world_biome_a, world_biome_b, spill_biome]
             world.border_biomes = [spill_biome]
